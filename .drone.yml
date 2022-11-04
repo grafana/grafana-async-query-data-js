@@ -1,0 +1,34 @@
+---
+# This file must be signed. You can do so with the `mage drone` command
+
+kind: pipeline
+type: docker
+name:
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+  - name: initialize
+    image: grafana/grafana-plugin-ci:1.5.1-alpine
+    commands:
+      - mkdir -p bin
+      - curl -fL -o bin/grabpl https://grafana-downloads.storage.googleapis.com/grafana-build-pipeline/v0.5.27/grabpl
+      - chmod +x bin/grabpl
+      - mkdir ci
+      - yarn install --frozen-lockfile --no-progress
+      - rm -rf node_modules/@grafana/data/node_modules
+
+  - name: build-and-test-frontend
+    image: grafana/grafana-plugin-ci:1.5.1-alpine
+    commands:
+      - yarn eslint ./src --ext .js,.jsx,.ts,.tsx
+      - yarn build
+      - yarn test-ci
+    depends_on:
+      - initialize
+
+---
+kind: signature
+hmac: b63300304a0dad7f76ee99c27e2fc095c1be56d60501d9ad93d371324f2eb637
