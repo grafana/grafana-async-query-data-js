@@ -13,5 +13,5 @@ Drone signs the Drone configuration file. This needs to be run everytime the dro
 To update the drone file run (note that you need to export your `DRONE_TOKEN` before):
 
 ```
-drone --server https://drone.grafana.net sign --save grafana/grafana-async-query
+drone --server https://drone.grafana.net sign --save grafana/grafana-async-query-data-js
 ```
