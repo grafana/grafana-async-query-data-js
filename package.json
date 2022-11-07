@@ -1,5 +1,5 @@
 {
-  "name": "@grafana/async-query-support",
+  "name": "@grafana/async-query",
   "version": "0.0.1",
   "description": "Async query support for Grafana",
   "main": "dist/index.js",
@@ -23,7 +23,7 @@
     "index.js",
     "dist"
   ],
-  "repository": "github:grafana/grafana-async-query-support",
+  "repository": "github:grafana/grafana-async-query",
   "author": "Grafana Labs <team@grafana.com> (https://grafana.com)",
   "license": "Apache-2.0",
   "dependencies": {
