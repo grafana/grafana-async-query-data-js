@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { HorizontalGroup, Button, Spinner } from '@grafana/ui';
 import { DataQuery, LoadingState } from '@grafana/data';
 
-interface RunQueryButtonsProps<TQuery extends DataQuery> {
+export interface RunQueryButtonsProps<TQuery extends DataQuery> {
   onRunQuery: () => void;
   onCancelQuery: (query: TQuery) => void;
+  isQueryValid: (query: TQuery) => boolean;
   query: TQuery;
   state?: LoadingState;
 }
@@ -36,9 +37,11 @@ export const RunQueryButtons = <TQuery extends DataQuery>(props: RunQueryButtons
     setStopping(true);
   };
 
+  const isQueryValid = props.isQueryValid(props.query);
+
   return (
     <HorizontalGroup>
-      <Button icon={running ? undefined : 'play'} disabled={running} onClick={onRunQuery}>
+      <Button icon={running ? undefined : 'play'} disabled={running || !isQueryValid} onClick={onRunQuery}>
         {running && !stopping ? (
           <HorizontalGroup>
             <Spinner /> Running
