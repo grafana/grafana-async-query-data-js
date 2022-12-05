@@ -4,7 +4,7 @@ import { DataQuery, LoadingState } from '@grafana/data';
 
 export interface RunQueryButtonsProps<TQuery extends DataQuery> {
   onRunQuery: () => void;
-  onCancelQuery: (query: TQuery) => void;
+  onCancelQuery?: (query: TQuery) => void;
   isQueryValid: (query: TQuery) => boolean;
   query: TQuery;
   state?: LoadingState;
@@ -32,10 +32,12 @@ export const RunQueryButtons = <TQuery extends DataQuery>(props: RunQueryButtons
     props.onRunQuery();
   };
 
-  const onCancelQuery = () => {
-    props.onCancelQuery(lastQuery);
-    setStopping(true);
-  };
+  const onCancelQuery = props.onCancelQuery
+    ? () => {
+        props.onCancelQuery?.(lastQuery);
+        setStopping(true);
+      }
+    : undefined;
 
   const isQueryValid = props.isQueryValid(props.query);
 
@@ -50,15 +52,17 @@ export const RunQueryButtons = <TQuery extends DataQuery>(props: RunQueryButtons
           'Run'
         )}
       </Button>
-      <Button icon={running ? undefined : 'square-shape'} disabled={!running || stopping} onClick={onCancelQuery}>
-        {stopping ? (
-          <HorizontalGroup>
-            <Spinner /> Stopping
-          </HorizontalGroup>
-        ) : (
-          'Stop'
-        )}
-      </Button>
+      {onCancelQuery && (
+        <Button icon={running ? undefined : 'square-shape'} disabled={!running || stopping} onClick={onCancelQuery}>
+          {stopping ? (
+            <HorizontalGroup>
+              <Spinner /> Stopping
+            </HorizontalGroup>
+          ) : (
+            'Stop'
+          )}
+        </Button>
+      )}
     </HorizontalGroup>
   );
 };
