@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { DataQuery } from '@grafana/data';
 import { RunQueryButtons, RunQueryButtonsProps } from './RunQueryButtons';
 
-const getDefaultProps = (overrides: Partial<RunQueryButtonsProps<DataQuery>>) => {
+const getDefaultProps = (overrides?: Partial<RunQueryButtonsProps<DataQuery>>) => {
   return {
     onRunQuery: jest.fn(),
     onCancelQuery: jest.fn(),
@@ -29,11 +29,21 @@ describe('RunQueryButtons', () => {
     expect(runButton).not.toBeDisabled();
   });
 
-  it('only renders the `Run button if onCancelQuery is undefined', () => {
+  it('only renders the `Run` button if onCancelQuery is undefined', () => {
     const props = getDefaultProps({ onCancelQuery: undefined });
     render(<RunQueryButtons {...props} />);
     const runButton = screen.getByRole('button', { name: 'Run' });
     expect(runButton).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Stop' })).not.toBeInTheDocument();
+    const stopButton = screen.queryByRole('button', { name: 'Stop' });
+    expect(stopButton).not.toBeInTheDocument();
+  });
+
+  it('renders the `Run` and `Stop` buttons if onCancelQuery defined', () => {
+    const props = getDefaultProps();
+    render(<RunQueryButtons {...props} />);
+    const runButton = screen.getByRole('button', { name: 'Run' });
+    expect(runButton).toBeInTheDocument();
+    const stopButton = screen.queryByRole('button', { name: 'Stop' });
+    expect(stopButton).toBeInTheDocument();
   });
 });
