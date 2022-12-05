@@ -28,4 +28,12 @@ describe('RunQueryButtons', () => {
     const runButton = screen.getByRole('button', { name: 'Run' });
     expect(runButton).not.toBeDisabled();
   });
+
+  it('only renders the `Run button if onCancelQuery is undefined', () => {
+    const props = getDefaultProps({ onCancelQuery: undefined });
+    render(<RunQueryButtons {...props} />);
+    const runButton = screen.getByRole('button', { name: 'Run' });
+    expect(runButton).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Stop' })).not.toBeInTheDocument();
+  });
 });
