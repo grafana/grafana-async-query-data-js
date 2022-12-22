@@ -4,8 +4,8 @@
   "compilerOptions": {
     "baseUrl": "./src",
     "rootDir": "./src",
-    "typeRoots": ["./node_modules/@types"],
     "declarationDir": "./compiled",
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": true,
+    "isolatedModules": true
   }
 }
