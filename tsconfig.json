@@ -1,11 +1,9 @@
 {
-  "extends": "@grafana/tsconfig",
-  "include": ["src", "index.js"],
+  "extends": "./.config/tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./src",
-    "rootDir": "./src",
-    "typeRoots": ["./node_modules/@types"],
     "declarationDir": "./compiled",
-    "emitDeclarationOnly": true
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "isolatedModules": true
   }
 }
