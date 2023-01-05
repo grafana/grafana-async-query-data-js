@@ -1,5 +1,9 @@
 import { DataQuery, DataSourceInstanceSettings, PluginType, getDefaultTimeRange } from '@grafana/data';
+import { DataSourceWithBackend } from '@grafana/runtime';
 import { DatasourceWithAsyncBackend } from './DatasourceWithAsyncBackend';
+
+const queryMock = jest.fn().mockImplementation(() => Promise.resolve({ data: [] }));
+jest.spyOn(DataSourceWithBackend.prototype, 'query').mockImplementation(queryMock);
 
 const defaultInstanceSettings: DataSourceInstanceSettings<{}> = {
   id: 1,
@@ -53,6 +57,10 @@ const setupDatasourceWithAsyncBackend = ({
 }) => new DatasourceWithAsyncBackend<DataQuery>(settings, asyncQueryDataSupport);
 
 describe('DatasourceWithAsyncBackend', () => {
+  // beforeAll(() => {
+  //   queryMock.mockClear();
+  // });
+
   it('can store running queries', () => {
     const ds = setupDatasourceWithAsyncBackend({});
 
@@ -77,8 +85,8 @@ describe('DatasourceWithAsyncBackend', () => {
     expect(ds.getQuery(defaultQuery)).toEqual({ queryID: '123', shouldCancel: true });
   });
 
-  it('can queue individual queries to run asynchronously', () => {
-    const ds = setupDatasourceWithAsyncBackend({});
+  it('can queue individual queries to run asynchronously if feature toggle asyncQueryDataSupport is `true`', () => {
+    const ds = setupDatasourceWithAsyncBackend({ asyncQueryDataSupport: true });
 
     ds.doSingle = jest.fn().mockReturnValue(Promise.resolve({ data: [] }));
     expect(ds.doSingle).not.toHaveBeenCalled();
@@ -86,5 +94,16 @@ describe('DatasourceWithAsyncBackend', () => {
     expect(ds.doSingle).toHaveBeenCalledTimes(2);
     expect(ds.doSingle).toHaveBeenCalledWith(defaultQuery, defaultRequest);
     expect(ds.doSingle).toHaveBeenCalledWith(defaultQuery2, defaultRequest);
+  });
+
+  it('can run queries synchronously if feature toggle asyncQueryDataSupport is `false`', () => {
+    const ds = setupDatasourceWithAsyncBackend({ asyncQueryDataSupport: false });
+
+    ds.doSingle = jest.fn();
+    expect(ds.doSingle).not.toHaveBeenCalled();
+    ds.query(defaultRequest);
+    expect(ds.doSingle).not.toHaveBeenCalled();
+    expect(queryMock).toHaveBeenCalledTimes(1);
+    expect(queryMock).toHaveBeenCalledWith(defaultRequest);
   });
 });
