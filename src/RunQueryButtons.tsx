@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { HorizontalGroup, Button, Spinner } from '@grafana/ui';
+import { Button } from '@grafana/ui';
 import { DataQuery, LoadingState } from '@grafana/data';
 
 export interface RunQueryButtonsProps<TQuery extends DataQuery> {
+  enableRun?: boolean;
   onRunQuery: () => void;
   onCancelQuery?: (query: TQuery) => void;
-  isQueryValid: (query: TQuery) => boolean;
   query: TQuery;
   state?: LoadingState;
 }
@@ -39,30 +39,28 @@ export const RunQueryButtons = <TQuery extends DataQuery>(props: RunQueryButtons
       }
     : undefined;
 
-  const isQueryValid = props.isQueryValid(props.query);
-
   return (
-    <HorizontalGroup>
-      <Button icon={running ? undefined : 'play'} disabled={running || !isQueryValid} onClick={onRunQuery}>
-        {running && !stopping ? (
-          <HorizontalGroup>
-            <Spinner /> Running
-          </HorizontalGroup>
-        ) : (
-          'Run'
-        )}
-      </Button>
-      {onCancelQuery && (
-        <Button icon={running ? undefined : 'square-shape'} disabled={!running || stopping} onClick={onCancelQuery}>
-          {stopping ? (
-            <HorizontalGroup>
-              <Spinner /> Stopping
-            </HorizontalGroup>
-          ) : (
-            'Stop'
-          )}
+      <>
+        <Button
+            variant={props.enableRun ? 'primary' : 'secondary'}
+            size="sm"
+            onClick={onRunQuery}
+            icon={running && !stopping ? 'fa fa-spinner' : undefined}
+            disabled={state === LoadingState.Loading || !props.enableRun}
+        >
+          Run query
         </Button>
-      )}
-    </HorizontalGroup>
+        {onCancelQuery &&
+            <Button
+                variant={running && !stopping ? 'primary' : 'secondary'}
+                size="sm"
+                disabled={!running || stopping}
+                icon={stopping ? 'fa fa-spinner' : undefined}
+                onClick={onCancelQuery}
+            >
+              Stop query
+            </Button>
+        }
+      </>
   );
 };

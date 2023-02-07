@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v0.1.4
+
+- Modify query buttons into header buttons
+
 ## v0.0.1
 
 - Add `DatasourceWithAsyncBackend` class to handle async query flow on the frontend
