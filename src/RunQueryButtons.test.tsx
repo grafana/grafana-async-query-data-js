@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import {fireEvent, render, screen} from '@testing-library/react';
 
 import { DataQuery } from '@grafana/data';
 import { RunQueryButtons, RunQueryButtonsProps } from './RunQueryButtons';
@@ -45,5 +45,16 @@ describe('RunQueryButtons', () => {
     expect(runButton).toBeInTheDocument();
     const stopButton = screen.queryByRole('button', { name: 'Stop query' });
     expect(stopButton).toBeInTheDocument();
+  });
+
+  it('Stop query button should be disabled until run button is clicked', () => {
+    const props = getDefaultProps();
+    render(<RunQueryButtons {...props} />);
+    const runButton = screen.getByRole('button', { name: 'Run query' });
+    const stopButton = screen.getByRole('button', { name: 'Stop query' });
+    expect(stopButton).toBeInTheDocument();
+    expect(stopButton).toBeDisabled();
+    fireEvent.click(runButton);
+    expect(stopButton).not.toBeDisabled();
   });
 });
