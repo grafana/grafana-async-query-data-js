@@ -8,7 +8,7 @@ import {
 } from '@grafana/data';
 import { BackendDataSourceResponse, DataSourceWithBackend, getBackendSrv, toDataQueryResponse } from '@grafana/runtime';
 import { merge, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { catchError,map } from 'rxjs/operators';
 import { getRequestLooper } from './requestLooper';
 
 export interface CustomMeta {
@@ -151,7 +151,9 @@ export class DatasourceWithAsyncBackend<
 
           return getBackendSrv()
             .fetch<BackendDataSourceResponse>(options)
-            .pipe(map((result) => ({ data: toDataQueryResponse(result).data })));
+            .pipe(map((result) => ({ data: toDataQueryResponse(result).data })), catchError((err) => {
+              return of(toDataQueryResponse(err));
+            }));
         },
 
         /**
