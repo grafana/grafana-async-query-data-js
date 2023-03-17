@@ -4,7 +4,7 @@
   "description": "Async query support for Grafana",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "watch 'npm run bundle' ./src",
+    "dev": "yarn bundle --watch --watch.onStart=\"yarn typecheck\"",
     "build": "yarn clean && yarn typecheck && yarn bundle",
     "bundle": "rollup -c rollup.config.ts",
     "clean": "rimraf ./dist ./compiled",

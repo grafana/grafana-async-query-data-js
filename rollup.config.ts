@@ -39,5 +39,8 @@ export default [
       file: pkg.publishConfig.types,
       format: 'es',
     },
+    watch: {
+      exclude: './compiled/**',
+    },
   },
 ];
