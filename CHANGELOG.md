@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## v0.1.5
+
+- Update npm-bump-version.yml (#15)
+- Fix yarn dev script (#13)
+- Add error catch to results of backend response (#12)
+- Add missing test (#11)
+
 ## v0.1.4
 
 - Modify query buttons into header buttons
