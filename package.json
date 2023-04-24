@@ -1,6 +1,6 @@
 {
   "name": "@grafana/async-query-data",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Async query support for Grafana",
   "main": "dist/index.js",
   "scripts": {
