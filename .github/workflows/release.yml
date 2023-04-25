@@ -1,0 +1,78 @@
+name: release
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  npm-publish:
+    name: Publish to NPM & GitHub Package Registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: main
+      # limit releases to version changes - https://github.com/EndBug/version-check
+      - name: Check version changes
+        uses: EndBug/version-check@v1
+        id: version_check
+        with:
+          file-url: https://unpkg.com/@grafana/async-query-data@latest/package.json
+          static-checking: localIsNew
+
+      - name: Version update detected
+        if: steps.version_check.outputs.changed == 'true'
+        run: 'echo "Version change found! New version: ${{ steps.version_check.outputs.version }} (${{ steps.version_check.outputs.type }})"'
+
+      - name: Setup .npmrc file for NPM registry
+        if: steps.version_check.outputs.changed == 'true'
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        if: steps.version_check.outputs.changed == 'true'
+        run: yarn
+
+      - name: Build library
+        if: steps.version_check.outputs.changed == 'true'
+        run: yarn build
+
+      - name: Publish package to NPM
+        if: steps.version_check.outputs.changed == 'true'
+        run: npm publish --access public --scope grafana
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Setup .npmrc file for GitHub Packages
+        if: steps.version_check.outputs.changed == 'true'
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@grafana'
+
+      - name: Publish package to Github Packages
+        if: steps.version_check.outputs.changed == 'true'
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  create-github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: npm-publish
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create Release Notes
+        uses: actions/github-script@v6.2.0
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            await github.request(`POST /repos/${{ github.repository }}/releases`, {
+              tag_name: "${{ github.ref }}",
+              generate_release_notes: true
+            });
