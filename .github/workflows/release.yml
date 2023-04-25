@@ -18,7 +18,7 @@ jobs:
         uses: EndBug/version-check@v1
         id: version_check
         with:
-          file-url: https://unpkg.com/@grafana/aws-sdk@latest/package.json
+          file-url: https://unpkg.com/@grafana/async-query-data@latest/package.json
           static-checking: localIsNew
 
       - name: Version update detected
