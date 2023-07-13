@@ -6,7 +6,7 @@ import {
   DataSourceInstanceSettings,
   DataSourceJsonData,
 } from '@grafana/data';
-import { BackendDataSourceResponse, DataSourceWithBackend, getBackendSrv, toDataQueryResponse } from '@grafana/runtime';
+import { BackendDataSourceResponse, DataSourceWithBackend, config, getBackendSrv, toDataQueryResponse } from '@grafana/runtime';
 import { merge, Observable, of } from 'rxjs';
 import { catchError,map } from 'rxjs/operators';
 import { getRequestLooper } from './requestLooper';
@@ -136,7 +136,8 @@ export class DatasourceWithAsyncBackend<
           };
 
           let headers = {};
-          if (isRunning(status)) {
+          const cachingDisabled = !config.featureToggles.useCachingService || !config.featureToggles.awsAsyncQueryCaching
+          if (cachingDisabled && isRunning(status)) {
             // bypass query caching for Grafana Enterprise to
             // prevent an infinite loop
             headers = { 'X-Cache-Skip': true };
