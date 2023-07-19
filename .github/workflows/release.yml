@@ -8,6 +8,8 @@ jobs:
   npm-publish:
     name: Publish to NPM & GitHub Package Registry
     runs-on: ubuntu-latest
+    outputs:
+      new_version: ${{ steps.version_check.outputs.version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -73,6 +75,6 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             await github.request(`POST /repos/${{ github.repository }}/releases`, {
-              tag_name: "v${{ steps.version_check.outputs.version }}",
+              tag_name: "v${{needs.npm-publish.outputs.new_version }}",
               generate_release_notes: true
             });
