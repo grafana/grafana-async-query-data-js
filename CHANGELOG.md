@@ -1,6 +1,10 @@
 # Change Log
 
 All notable changes to this project will be documented in this file.
+## v0.1.9
+
+- Fix github publish with output from previous step (#21)
+
 ## v0.1.8
 
 - Update github release workflow (#20)
