@@ -28,6 +28,9 @@ export interface RequestLoopOptions<TQuery extends DataQuery = DataQuery> {
   onCancel: () => void;
 }
 
+const DELAY_INTERVAL_MS = 10;
+const MAX_NEXT_REQUEST_DELAY = 10000 / DELAY_INTERVAL_MS; // 10 seconds maximum delay between requests
+
 /**
  * Continue executing requests as long as `getNextQuery` returns a query
  */
@@ -39,7 +42,7 @@ export function getRequestLooper<T extends DataQuery = DataQuery>(
     let nextQuery: T | undefined = undefined;
     let subscription: Subscription | undefined = undefined;
     let loadingState: LoadingState | undefined = LoadingState.Loading;
-    let nextRequestDelay = 1; // Seconds until the next request
+    let nextRequestDelay = 1; // number of DELAY_INTERVAL_MS to wait before the next request
     let count = 1;
     let shouldCancel = false;
 
@@ -71,8 +74,10 @@ export function getRequestLooper<T extends DataQuery = DataQuery>(
             } else {
               loadingState = LoadingState.Loading;
             }
-            // Calculate the time for the next request, cap at 10s
-            nextRequestDelay = nextRequestDelay * 2 > 10 ? 10 : nextRequestDelay * 2;
+            // Calculate the number of DELAY_INTERVAL_MS to wait before the next request.
+            // Caps it so the delay is not more than 10s
+            nextRequestDelay =
+              nextRequestDelay * 2 > MAX_NEXT_REQUEST_DELAY ? MAX_NEXT_REQUEST_DELAY : nextRequestDelay * 2;
           } else {
             loadingState = LoadingState.Done;
             nextRequestDelay = 0;
@@ -99,7 +104,7 @@ export function getRequestLooper<T extends DataQuery = DataQuery>(
               .query({ ...req, requestId: `${req.requestId}.${++count}`, targets: [next] })
               .subscribe(observer);
             nextQuery = undefined;
-          }, nextRequestDelay * 1000);
+          }, nextRequestDelay * DELAY_INTERVAL_MS);
         } else {
           subscriber.complete();
         }
