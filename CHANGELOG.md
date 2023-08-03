@@ -1,6 +1,11 @@
 # Change Log
 
 All notable changes to this project will be documented in this file.
+
+## v0.1.10
+
+- Fix minimum query time (#22)
+
 ## v0.1.9
 
 - Fix github publish with output from previous step (#21)
