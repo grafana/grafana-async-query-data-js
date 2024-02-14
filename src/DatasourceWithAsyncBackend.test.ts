@@ -5,8 +5,14 @@ import { DatasourceWithAsyncBackend } from './DatasourceWithAsyncBackend';
 const queryMock = jest.fn().mockImplementation(() => Promise.resolve({ data: [] }));
 jest.spyOn(DataSourceWithBackend.prototype, 'query').mockImplementation(queryMock);
 
+const getRequestLooperMock = jest.fn();
+jest.mock('./requestLooper.ts', () => ({
+  ...jest.requireActual('./requestLooper.ts'),
+  getRequestLooper: (req: any, options: any) => getRequestLooperMock(req, options),
+}));
+
 const defaultInstanceSettings: DataSourceInstanceSettings<{}> = {
-  id: 1,
+  id: 12,
   uid: 'test',
   type: 'test',
   name: 'test',
@@ -33,6 +39,7 @@ const defaultInstanceSettings: DataSourceInstanceSettings<{}> = {
   },
   access: 'direct',
   jsonData: {},
+  readOnly: false,
 };
 const defaultQuery = { refId: 'refId-1' };
 const defaultQuery2 = { refId: 'refId-2' };
@@ -105,5 +112,18 @@ describe('DatasourceWithAsyncBackend', () => {
     expect(ds.doSingle).not.toHaveBeenCalled();
     expect(queryMock).toHaveBeenCalledTimes(1);
     expect(queryMock).toHaveBeenCalledWith(defaultRequest);
+  });
+
+  it('uses the datasource id for the request id', () => {
+    const ds = setupDatasourceWithAsyncBackend({ asyncQueryDataSupport: true });
+    expect(getRequestLooperMock).not.toHaveBeenCalled();
+    ds.doSingle(defaultQuery, defaultRequest);
+    expect(getRequestLooperMock).toHaveBeenCalledTimes(1);
+    const expectedRequest = {
+      ...defaultRequest,
+      targets: [defaultQuery],
+      requestId: '12_100',
+    };
+    expect(getRequestLooperMock).toHaveBeenCalledWith(expectedRequest, expect.anything());
   });
 });
