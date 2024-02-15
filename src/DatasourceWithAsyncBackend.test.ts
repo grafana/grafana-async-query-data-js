@@ -1,6 +1,13 @@
-import { DataQuery, DataSourceInstanceSettings, PluginType, getDefaultTimeRange } from '@grafana/data';
+import {
+  DataQuery,
+  DataQueryRequest,
+  DataSourceInstanceSettings,
+  PluginType,
+  getDefaultTimeRange,
+} from '@grafana/data';
 import { DataSourceWithBackend } from '@grafana/runtime';
 import { DatasourceWithAsyncBackend } from './DatasourceWithAsyncBackend';
+import { RequestLoopOptions } from 'requestLooper';
 
 const queryMock = jest.fn().mockImplementation(() => Promise.resolve({ data: [] }));
 jest.spyOn(DataSourceWithBackend.prototype, 'query').mockImplementation(queryMock);
@@ -8,7 +15,7 @@ jest.spyOn(DataSourceWithBackend.prototype, 'query').mockImplementation(queryMoc
 const getRequestLooperMock = jest.fn();
 jest.mock('./requestLooper.ts', () => ({
   ...jest.requireActual('./requestLooper.ts'),
-  getRequestLooper: (req: any, options: any) => getRequestLooperMock(req, options),
+  getRequestLooper: (req: DataQueryRequest, options: RequestLoopOptions) => getRequestLooperMock(req, options),
 }));
 
 const defaultInstanceSettings: DataSourceInstanceSettings<{}> = {

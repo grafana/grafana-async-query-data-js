@@ -106,7 +106,7 @@ describe('requestLooper', () => {
         .mockImplementationOnce(() => ({ ...mockQuery, queryId: 'queryId' }))
         .mockImplementationOnce(() => ({ ...mockQuery, queryId: 'queryId' }))
         .mockImplementationOnce(() => undefined),
-      query: (req: any) => queryMock(req),
+      query: (req) => queryMock(req),
       onCancel: jest.fn(),
       process: jest.fn().mockImplementation(() => []),
       shouldCancel: jest.fn().mockImplementation(() => false),
