@@ -6,9 +6,15 @@ import {
   DataSourceInstanceSettings,
   DataSourceJsonData,
 } from '@grafana/data';
-import { BackendDataSourceResponse, DataSourceWithBackend, config, getBackendSrv, toDataQueryResponse } from '@grafana/runtime';
+import {
+  BackendDataSourceResponse,
+  DataSourceWithBackend,
+  config,
+  getBackendSrv,
+  toDataQueryResponse,
+} from '@grafana/runtime';
 import { merge, Observable, of } from 'rxjs';
-import { catchError,map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { getRequestLooper } from './requestLooper';
 
 export interface CustomMeta {
@@ -38,9 +44,11 @@ export class DatasourceWithAsyncBackend<
   private runningQueries: { [hash: string]: RunningQueryInfo } = {};
   private requestCounter = 100;
   private asyncQueryDataSupport: boolean;
+  private requestIdPrefix: number;
 
   constructor(instanceSettings: DataSourceInstanceSettings<TOptions>, asyncQueryDataSupport = false) {
     super(instanceSettings);
+    this.requestIdPrefix = instanceSettings.id;
     this.asyncQueryDataSupport = asyncQueryDataSupport;
   }
 
@@ -85,7 +93,7 @@ export class DatasourceWithAsyncBackend<
     let allData: DataFrame[] = [];
 
     return getRequestLooper(
-      { ...request, targets: [target], requestId: `aws_ts_${this.requestCounter++}` },
+      { ...request, targets: [target], requestId: `${this.requestIdPrefix}_${this.requestCounter++}` },
       {
         /**
          * Additional query to execute if the current query is still in a running state
@@ -136,7 +144,8 @@ export class DatasourceWithAsyncBackend<
           };
 
           let headers = {};
-          const cachingDisabled = !config.featureToggles.useCachingService || !config.featureToggles.awsAsyncQueryCaching
+          const cachingDisabled =
+            !config.featureToggles.useCachingService || !config.featureToggles.awsAsyncQueryCaching;
           if (cachingDisabled && isRunning(status)) {
             // bypass query caching for Grafana Enterprise to
             // prevent an infinite loop
@@ -152,9 +161,12 @@ export class DatasourceWithAsyncBackend<
 
           return getBackendSrv()
             .fetch<BackendDataSourceResponse>(options)
-            .pipe(map((result) => ({ data: toDataQueryResponse(result).data })), catchError((err) => {
-              return of(toDataQueryResponse(err));
-            }));
+            .pipe(
+              map((result) => ({ data: toDataQueryResponse(result).data })),
+              catchError((err) => {
+                return of(toDataQueryResponse(err));
+              })
+            );
         },
 
         /**

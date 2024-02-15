@@ -1,6 +1,7 @@
 import { RequestLoopOptions, getRequestLooper } from 'requestLooper';
 import { TestScheduler } from 'rxjs/testing';
-import { getDefaultTimeRange, DataQuery, LoadingState } from '@grafana/data';
+import { of } from 'rxjs';
+import { getDefaultTimeRange, DataQuery, LoadingState, DataQueryRequest } from '@grafana/data';
 
 const mockQuery: DataQuery = {
   refId: '',
@@ -89,5 +90,39 @@ describe('requestLooper', () => {
 
     scheduler.flush();
     expect(onCancel).toBeCalledTimes(1);
+  });
+
+  it('increments the request id', (done) => {
+    let requestIds: string[] = [];
+
+    const queryMock = jest.fn().mockImplementation((req: DataQueryRequest) => {
+      requestIds.push(req.requestId);
+      return of({ data: [], state: LoadingState.Loading, meta });
+    });
+
+    const opt: RequestLoopOptions = {
+      getNextQuery: jest
+        .fn()
+        .mockImplementationOnce(() => ({ ...mockQuery, queryId: 'queryId' }))
+        .mockImplementationOnce(() => ({ ...mockQuery, queryId: 'queryId' }))
+        .mockImplementationOnce(() => undefined),
+      query: (req) => queryMock(req),
+      onCancel: jest.fn(),
+      process: jest.fn().mockImplementation(() => []),
+      shouldCancel: jest.fn().mockImplementation(() => false),
+    };
+
+    const looper = getRequestLooper(request, opt);
+
+    looper.subscribe({
+      next: () => {},
+      complete: () => {
+        expect(requestIds).toHaveLength(3);
+        expect(requestIds[0]).toBe(request.requestId);
+        expect(requestIds[1]).toBe(request.requestId + '.2');
+        expect(requestIds[2]).toBe(request.requestId + '.3');
+        done();
+      },
+    });
   });
 });
