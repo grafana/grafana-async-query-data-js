@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## v0.1.11
+
+- Support Node 18 (#25)
+- Fix workflows (#26)
+- Fix running multiple async datasources (#27)
+
 ## v0.1.10
 
 - Fix minimum query time (#22)
