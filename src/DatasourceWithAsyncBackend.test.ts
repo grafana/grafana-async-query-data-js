@@ -5,7 +5,7 @@ import {
   PluginType,
   getDefaultTimeRange,
 } from '@grafana/data';
-import { DataSourceWithBackend } from '@grafana/runtime';
+import { DataSourceWithBackend, config } from '@grafana/runtime';
 import { DatasourceWithAsyncBackend } from './DatasourceWithAsyncBackend';
 import { RequestLoopOptions } from 'requestLooper';
 
@@ -16,6 +16,16 @@ const getRequestLooperMock = jest.fn();
 jest.mock('./requestLooper.ts', () => ({
   ...jest.requireActual('./requestLooper.ts'),
   getRequestLooper: (req: DataQueryRequest, options: RequestLoopOptions) => getRequestLooperMock(req, options),
+}));
+
+jest.mock('@grafana/runtime', () => ({
+  ...jest.requireActual('@grafana/runtime'),
+  config: {
+    ...jest.requireActual('@grafana/runtime').config,
+    buildInfo: {
+      version: '10.2.3',
+    },
+  },
 }));
 
 const defaultInstanceSettings: DataSourceInstanceSettings<{}> = {
@@ -71,9 +81,9 @@ const setupDatasourceWithAsyncBackend = ({
 }) => new DatasourceWithAsyncBackend<DataQuery>(settings, asyncQueryDataSupport);
 
 describe('DatasourceWithAsyncBackend', () => {
-  // beforeAll(() => {
-  //   queryMock.mockClear();
-  // });
+  beforeAll(() => {
+    queryMock.mockClear();
+  });
 
   it('can store running queries', () => {
     const ds = setupDatasourceWithAsyncBackend({});
@@ -121,7 +131,7 @@ describe('DatasourceWithAsyncBackend', () => {
     expect(queryMock).toHaveBeenCalledWith(defaultRequest);
   });
 
-  it('uses the datasource id for the request id', () => {
+  it('uses the datasource uid for the request uid', () => {
     const ds = setupDatasourceWithAsyncBackend({ asyncQueryDataSupport: true });
     expect(getRequestLooperMock).not.toHaveBeenCalled();
     ds.doSingle(defaultQuery, defaultRequest);
@@ -129,7 +139,7 @@ describe('DatasourceWithAsyncBackend', () => {
     const expectedRequest = {
       ...defaultRequest,
       targets: [defaultQuery],
-      requestId: '12_100',
+      requestId: 'test_100',
     };
     expect(getRequestLooperMock).toHaveBeenCalledWith(expectedRequest, expect.anything());
   });
