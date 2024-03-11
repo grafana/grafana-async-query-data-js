@@ -15,7 +15,11 @@ import {
 } from '@grafana/runtime';
 import { merge, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { gte } from 'semver';
 import { getRequestLooper } from './requestLooper';
+
+const cachingDisabled = !config.featureToggles.useCachingService || !config.featureToggles.awsAsyncQueryCaching;
+const requestSupportsSkipQueryCache = gte(config.buildInfo.version, '10.2.3');
 
 export interface CustomMeta {
   queryID: string;
@@ -44,11 +48,11 @@ export class DatasourceWithAsyncBackend<
   private runningQueries: { [hash: string]: RunningQueryInfo } = {};
   private requestCounter = 100;
   private asyncQueryDataSupport: boolean;
-  private requestIdPrefix: number;
+  private requestIdPrefix: string | number;
 
   constructor(instanceSettings: DataSourceInstanceSettings<TOptions>, asyncQueryDataSupport = false) {
     super(instanceSettings);
-    this.requestIdPrefix = instanceSettings.id;
+    this.requestIdPrefix = instanceSettings.uid ?? instanceSettings.id;
     this.asyncQueryDataSupport = asyncQueryDataSupport;
   }
 
@@ -124,49 +128,41 @@ export class DatasourceWithAsyncBackend<
           const query: TQuery & DataQueryMeta = {
             ..._query,
             ...(this.asyncQueryDataSupport ? { meta: { queryFlow: 'async' } } : {}),
+            intervalMs,
+            maxDataPoints,
+            // getRef optionally chained to support < v8.3.x of Grafana
+            datasource: this?.getRef(),
+            datasourceId: this.id,
+            ...this.applyTemplateVariables(_query, request.scopedVars),
           };
 
-          const data = {
-            queries: [
-              {
-                ...query,
-                intervalMs,
-                maxDataPoints,
-                // getRef optionally chained to support < v8.3.x of Grafana
-                datasource: this?.getRef(),
-                datasourceId: this.id,
-                ...this.applyTemplateVariables(query, request.scopedVars),
-              },
-            ],
-            range: range,
-            from: range.from.valueOf().toString(),
-            to: range.to.valueOf().toString(),
-          };
-
-          let headers = {};
-          const cachingDisabled =
-            !config.featureToggles.useCachingService || !config.featureToggles.awsAsyncQueryCaching;
+          // Manually bypass the query cache for running queries if the caching service is not enabled.
+          // The caching service handles bypassing the query cache automatically when it is enabled.
           if (cachingDisabled && isRunning(status)) {
-            // bypass query caching for Grafana Enterprise to
-            // prevent an infinite loop
-            headers = { 'X-Cache-Skip': true };
-          }
-          const options = {
-            method: 'POST',
-            url: '/api/ds/query',
-            data,
-            requestId,
-            headers,
-          };
+            if (!requestSupportsSkipQueryCache) {
+              return getBackendSrv()
+                .fetch<BackendDataSourceResponse>({
+                  method: 'POST',
+                  url: '/api/ds/query',
+                  headers: { 'X-Cache-Skip': true },
+                  requestId,
+                  data: {
+                    queries: [query],
+                    range: range,
+                    from: range.from.valueOf().toString(),
+                    to: range.to.valueOf().toString(),
+                  },
+                })
+                .pipe(
+                  map((result) => ({ data: toDataQueryResponse(result).data })),
+                  catchError((err) => of(toDataQueryResponse(err)))
+                );
+            }
 
-          return getBackendSrv()
-            .fetch<BackendDataSourceResponse>(options)
-            .pipe(
-              map((result) => ({ data: toDataQueryResponse(result).data })),
-              catchError((err) => {
-                return of(toDataQueryResponse(err));
-              })
-            );
+            return super.query({ ...request, targets: [query], skipQueryCache: true });
+          }
+
+          return super.query({ ...request, targets: [query] });
         },
 
         /**
