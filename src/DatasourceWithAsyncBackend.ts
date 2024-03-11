@@ -18,8 +18,6 @@ import { catchError, map } from 'rxjs/operators';
 import { gte } from 'semver';
 import { getRequestLooper } from './requestLooper';
 
-const requestSupportsSkipQueryCache = gte(config.buildInfo.version, '10.2.3');
-
 export interface CustomMeta {
   queryID: string;
   status: string;
@@ -133,6 +131,7 @@ export class DatasourceWithAsyncBackend<
           // The caching service handles bypassing the query cache automatically when it is enabled.
           const cachingDisabled = !config.featureToggles.awsAsyncQueryCaching;
           if (cachingDisabled && isRunning(status)) {
+            const requestSupportsSkipQueryCache = gte(config.buildInfo.version, '10.2.3');
             if (!requestSupportsSkipQueryCache) {
               return getBackendSrv()
                 .fetch<BackendDataSourceResponse>({

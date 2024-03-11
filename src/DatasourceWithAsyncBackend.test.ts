@@ -105,7 +105,7 @@ describe('DatasourceWithAsyncBackend', () => {
     expect(ds.doSingle).toHaveBeenCalledWith(defaultQuery2, defaultRequest);
   });
 
-  it('uses the datasource id for the request id', () => {
+  it('uses the datasource uid for the request uid', () => {
     const ds = setupDatasourceWithAsyncBackend();
     expect(getRequestLooperMock).not.toHaveBeenCalled();
     ds.doSingle(defaultQuery, defaultRequest);
@@ -113,7 +113,7 @@ describe('DatasourceWithAsyncBackend', () => {
     const expectedRequest = {
       ...defaultRequest,
       targets: [defaultQuery],
-      requestId: '12_100',
+      requestId: 'test_100',
     };
     expect(getRequestLooperMock).toHaveBeenCalledWith(expectedRequest, expect.anything());
   });
