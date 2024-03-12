@@ -62,13 +62,8 @@ const defaultRequest = {
   startTime: 0,
 };
 
-const setupDatasourceWithAsyncBackend = ({
-  settings = defaultInstanceSettings,
-  asyncQueryDataSupport = true,
-}: {
-  settings?: DataSourceInstanceSettings<{}>;
-  asyncQueryDataSupport?: boolean;
-}) => new DatasourceWithAsyncBackend<DataQuery>(settings, asyncQueryDataSupport);
+const setupDatasourceWithAsyncBackend = (settings: DataSourceInstanceSettings = defaultInstanceSettings) =>
+  new DatasourceWithAsyncBackend<DataQuery>(settings);
 
 describe('DatasourceWithAsyncBackend', () => {
   // beforeAll(() => {
@@ -76,14 +71,14 @@ describe('DatasourceWithAsyncBackend', () => {
   // });
 
   it('can store running queries', () => {
-    const ds = setupDatasourceWithAsyncBackend({});
+    const ds = setupDatasourceWithAsyncBackend();
 
     ds.storeQuery(defaultQuery, { queryID: '123' });
     expect(ds.getQuery(defaultQuery)).toEqual({ queryID: '123' });
   });
 
   it('can remove running queries', () => {
-    const ds = setupDatasourceWithAsyncBackend({});
+    const ds = setupDatasourceWithAsyncBackend();
 
     ds.storeQuery(defaultQuery, { queryID: '123' });
     expect(ds.getQuery(defaultQuery)).toEqual({ queryID: '123' });
@@ -92,15 +87,15 @@ describe('DatasourceWithAsyncBackend', () => {
   });
 
   it('can cancel running queries', () => {
-    const ds = setupDatasourceWithAsyncBackend({});
+    const ds = setupDatasourceWithAsyncBackend();
 
     ds.storeQuery(defaultQuery, { queryID: '123' });
     ds.cancel(defaultQuery);
     expect(ds.getQuery(defaultQuery)).toEqual({ queryID: '123', shouldCancel: true });
   });
 
-  it('can queue individual queries to run asynchronously if feature toggle asyncQueryDataSupport is `true`', () => {
-    const ds = setupDatasourceWithAsyncBackend({ asyncQueryDataSupport: true });
+  it('will queue individual queries to run asynchronously', () => {
+    const ds = setupDatasourceWithAsyncBackend();
 
     ds.doSingle = jest.fn().mockReturnValue(Promise.resolve({ data: [] }));
     expect(ds.doSingle).not.toHaveBeenCalled();
@@ -110,19 +105,8 @@ describe('DatasourceWithAsyncBackend', () => {
     expect(ds.doSingle).toHaveBeenCalledWith(defaultQuery2, defaultRequest);
   });
 
-  it('can run queries synchronously if feature toggle asyncQueryDataSupport is `false`', () => {
-    const ds = setupDatasourceWithAsyncBackend({ asyncQueryDataSupport: false });
-
-    ds.doSingle = jest.fn();
-    expect(ds.doSingle).not.toHaveBeenCalled();
-    ds.query(defaultRequest);
-    expect(ds.doSingle).not.toHaveBeenCalled();
-    expect(queryMock).toHaveBeenCalledTimes(1);
-    expect(queryMock).toHaveBeenCalledWith(defaultRequest);
-  });
-
   it('uses the datasource id for the request id', () => {
-    const ds = setupDatasourceWithAsyncBackend({ asyncQueryDataSupport: true });
+    const ds = setupDatasourceWithAsyncBackend();
     expect(getRequestLooperMock).not.toHaveBeenCalled();
     ds.doSingle(defaultQuery, defaultRequest);
     expect(getRequestLooperMock).toHaveBeenCalledTimes(1);

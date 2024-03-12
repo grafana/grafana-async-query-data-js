@@ -1,5 +1,5 @@
 import React from 'react';
-import {fireEvent, render, screen} from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { DataQuery } from '@grafana/data';
 import { RunQueryButtons, RunQueryButtonsProps } from './RunQueryButtons';
@@ -15,36 +15,27 @@ const getDefaultProps = (overrides?: Partial<RunQueryButtonsProps<DataQuery>>) =
 };
 
 describe('RunQueryButtons', () => {
-  it('disable the run button if the if the enableRun button is false', () => {
-    const props = getDefaultProps({ enableRun: false});
-    render(<RunQueryButtons {...props} />);
-    const runButton = screen.getByRole('button', { name: 'Run query' });
-    expect(runButton).toBeDisabled();
-  });
-
-  it('run button should be enabled if the enableRun button is true', () => {
-    const props = getDefaultProps({ enableRun: true});
-    render(<RunQueryButtons {...props} />);
-    const runButton = screen.getByRole('button', { name: 'Run query' });
-    expect(runButton).not.toBeDisabled();
-  });
-
-  it('only renders the `Run` button if onCancelQuery is undefined', () => {
-    const props = getDefaultProps({ onCancelQuery: undefined });
-    render(<RunQueryButtons {...props} />);
-    const runButton = screen.getByRole('button', { name: 'Run query' });
-    expect(runButton).toBeInTheDocument();
-    const stopButton = screen.queryByRole('button', { name: 'Stop query' });
-    expect(stopButton).not.toBeInTheDocument();
-  });
-
-  it('renders the `Run` and `Stop` buttons if onCancelQuery defined', () => {
+  it('renders the `Run` and `Stop` buttons', () => {
     const props = getDefaultProps();
     render(<RunQueryButtons {...props} />);
     const runButton = screen.getByRole('button', { name: 'Run query' });
     expect(runButton).toBeInTheDocument();
     const stopButton = screen.queryByRole('button', { name: 'Stop query' });
     expect(stopButton).toBeInTheDocument();
+  });
+  
+  it('disable the run button if the if the enableRun button is false', () => {
+    const props = getDefaultProps({ enableRun: false });
+    render(<RunQueryButtons {...props} />);
+    const runButton = screen.getByRole('button', { name: 'Run query' });
+    expect(runButton).toBeDisabled();
+  });
+
+  it('run button should be enabled if the enableRun button is true', () => {
+    const props = getDefaultProps({ enableRun: true });
+    render(<RunQueryButtons {...props} />);
+    const runButton = screen.getByRole('button', { name: 'Run query' });
+    expect(runButton).not.toBeDisabled();
   });
 
   it('Stop query button should be disabled until run button is clicked', () => {

@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v0.2.0
+
+- Remove athenaAsyncQueryDataSupport and redshiftAsyncQueryData feature toggle-related code
+
 ## v0.1.11
 
 - Support Node 18 (#25)
