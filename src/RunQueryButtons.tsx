@@ -5,7 +5,7 @@ import { DataQuery, LoadingState } from '@grafana/data';
 export interface RunQueryButtonsProps<TQuery extends DataQuery> {
   enableRun?: boolean;
   onRunQuery: () => void;
-  onCancelQuery?: (query: TQuery) => void;
+  onCancelQuery: (query: TQuery) => void;
   query: TQuery;
   state?: LoadingState;
 }
@@ -40,27 +40,25 @@ export const RunQueryButtons = <TQuery extends DataQuery>(props: RunQueryButtons
     : undefined;
 
   return (
-      <>
-        <Button
-            variant={props.enableRun ? 'primary' : 'secondary'}
-            size="sm"
-            onClick={onRunQuery}
-            icon={running && !stopping ? 'fa fa-spinner' : undefined}
-            disabled={state === LoadingState.Loading || !props.enableRun}
-        >
-          Run query
-        </Button>
-        {onCancelQuery &&
-            <Button
-                variant={running && !stopping ? 'primary' : 'secondary'}
-                size="sm"
-                disabled={!running || stopping}
-                icon={stopping ? 'fa fa-spinner' : undefined}
-                onClick={onCancelQuery}
-            >
-              Stop query
-            </Button>
-        }
-      </>
+    <>
+      <Button
+        variant={props.enableRun ? 'primary' : 'secondary'}
+        size="sm"
+        onClick={onRunQuery}
+        icon={running && !stopping ? 'fa fa-spinner' : undefined}
+        disabled={state === LoadingState.Loading || !props.enableRun}
+      >
+        Run query
+      </Button>
+      <Button
+        variant={running && !stopping ? 'primary' : 'secondary'}
+        size="sm"
+        disabled={!running || stopping}
+        icon={stopping ? 'fa fa-spinner' : undefined}
+        onClick={onCancelQuery}
+      >
+        Stop query
+      </Button>
+    </>
   );
 };

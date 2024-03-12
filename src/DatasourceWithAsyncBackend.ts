@@ -39,36 +39,30 @@ const isCustomMeta = (meta: unknown): meta is CustomMeta => {
 
 export class DatasourceWithAsyncBackend<
   TQuery extends DataQuery = DataQuery,
-  TOptions extends DataSourceJsonData = DataSourceJsonData
+  TOptions extends DataSourceJsonData = DataSourceJsonData,
 > extends DataSourceWithBackend<TQuery, TOptions> {
   private runningQueries: { [hash: string]: RunningQueryInfo } = {};
   private requestCounter = 100;
-  private asyncQueryDataSupport: boolean;
   private requestIdPrefix: number;
 
-  constructor(instanceSettings: DataSourceInstanceSettings<TOptions>, asyncQueryDataSupport = false) {
+  constructor(instanceSettings: DataSourceInstanceSettings<TOptions>) {
     super(instanceSettings);
     this.requestIdPrefix = instanceSettings.id;
-    this.asyncQueryDataSupport = asyncQueryDataSupport;
   }
 
   query(request: DataQueryRequest<TQuery>): Observable<DataQueryResponse> {
-    if (this.asyncQueryDataSupport) {
-      const targets = this.filterQuery ? request.targets.filter(this.filterQuery) : request.targets;
-      if (!targets.length) {
-        return of({ data: [] });
-      }
-      const all: Array<Observable<DataQueryResponse>> = [];
-      for (let target of targets) {
-        if (target.hide) {
-          continue;
-        }
-        all.push(this.doSingle(target, request));
-      }
-      return merge(...all);
-    } else {
-      return super.query(request);
+    const targets = this.filterQuery ? request.targets.filter(this.filterQuery) : request.targets;
+    if (!targets.length) {
+      return of({ data: [] });
     }
+    const all: Array<Observable<DataQueryResponse>> = [];
+    for (let target of targets) {
+      if (target.hide) {
+        continue;
+      }
+      all.push(this.doSingle(target, request));
+    }
+    return merge(...all);
   }
 
   storeQuery(target: TQuery, queryInfo: RunningQueryInfo) {
@@ -123,7 +117,7 @@ export class DatasourceWithAsyncBackend<
           const [_query] = targets;
           const query: TQuery & DataQueryMeta = {
             ..._query,
-            ...(this.asyncQueryDataSupport ? { meta: { queryFlow: 'async' } } : {}),
+            meta: { queryFlow: 'async' },
           };
 
           const data = {
