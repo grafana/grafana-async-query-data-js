@@ -3,10 +3,12 @@
   "version": "0.2.0",
   "description": "Async query support for Grafana",
   "main": "dist/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "dev": "yarn bundle --watch --watch.onStart=\"yarn typecheck\"",
     "build": "yarn clean && yarn typecheck && yarn bundle",
-    "bundle": "rollup -c rollup.config.ts",
+    "bundle": "rollup -c rollup.config.ts --configPlugin esbuild",
     "clean": "rimraf ./dist ./compiled",
     "lint": "eslint --cache --ignore-path ./.gitignore --ext .js,.jsx,.ts,.tsx ./src",
     "typecheck": "tsc -p ./tsconfig.build.json",
@@ -15,9 +17,6 @@
     "test:coverage": "jest --coverage"
   },
   "publishConfig": {
-    "main": "dist/index.js",
-    "module": "dist/esm/index.js",
-    "types": "dist/index.d.ts",
     "access": "public"
   },
   "files": [
