@@ -138,8 +138,7 @@ export class DatasourceWithAsyncBackend<
           };
 
           let headers = {};
-          const cachingDisabled =
-            !config.featureToggles.useCachingService || !config.featureToggles.awsAsyncQueryCaching;
+          const cachingDisabled = !config.featureToggles.awsAsyncQueryCaching;
           if (cachingDisabled && isRunning(status)) {
             // bypass query caching for Grafana Enterprise to
             // prevent an infinite loop
