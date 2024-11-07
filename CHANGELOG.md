@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v0.3.0
+
+- Chore: update deps in https://github.com/grafana/grafana-async-query-data-js/pull/31
+
 ## v0.2.0
 
 - Remove athenaAsyncQueryDataSupport and redshiftAsyncQueryData feature toggle-related code
