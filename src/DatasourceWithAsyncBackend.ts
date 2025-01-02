@@ -15,7 +15,7 @@ import {
 } from '@grafana/runtime';
 import { merge, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { gte } from 'semver';
+import { lt } from 'semver';
 import { getRequestLooper } from './requestLooper';
 
 export interface CustomMeta {
@@ -131,8 +131,8 @@ export class DatasourceWithAsyncBackend<
           // The caching service handles bypassing the query cache automatically when it is enabled.
           const cachingDisabled = !config.featureToggles.awsAsyncQueryCaching;
           if (cachingDisabled && isRunning(status)) {
-            const requestSupportsSkipQueryCache = gte(config.buildInfo.version, '10.2.3');
-            if (!requestSupportsSkipQueryCache) {
+            const requestSkipQueryCacheUnsupported = lt(config.buildInfo.version, '10.2.3');
+            if (requestSkipQueryCacheUnsupported) {
               return getBackendSrv()
                 .fetch<BackendDataSourceResponse>({
                   method: 'POST',
