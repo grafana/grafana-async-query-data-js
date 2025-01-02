@@ -10,7 +10,7 @@ updates:
     schedule:
       interval: 'weekly'
     groups:
-      all-dependencies:
+      all-github-action-dependencies:
         patterns:
           - '*'
   - package-ecosystem: 'npm'
@@ -18,6 +18,6 @@ updates:
     schedule:
       interval: 'weekly'
     groups:
-      all-dependencies:
+      all-node-dependencies:
         patterns:
           - '*'
