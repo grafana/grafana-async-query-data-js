@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v0.4.0
+
+- Use super.query in https://github.com/grafana/grafana-async-query-data-js/pull/29
+- Bump cross-spawn from 7.0.3 to 7.0.6 in the npm_and_yarn group in https://github.com/grafana/grafana-async-query-data-js/pull/44
+- Bump micromatch from 4.0.5 to 4.0.8 in the npm_and_yarn group in https://github.com/grafana/grafana-async-query-data-js/pull/38
+- Bump ws from 8.12.0 to 8.18.0 in the npm_and_yarn group in https://github.com/grafana/grafana-async-query-data-js/pull/39
+- Bump ua-parser-js from 1.0.32 to 1.0.39 in the npm_and_yarn group in https://github.com/grafana/grafana-async-query-data-js/pull/37
+- Bump tough-cookie from 4.1.2 to 4.1.4 in the npm_and_yarn group in https://github.com/grafana/grafana-async-query-data-js/pull/36
+- Bump braces from 3.0.2 to 3.0.3 in the npm_and_yarn group in https://github.com/grafana/grafana-async-query-data-js/pull/35
+- Bump the all-dependencies group across 1 directory with 9 updates in https://github.com/grafana/grafana-async-query-data-js/pull/40
+- Bump the all-dependencies group with 4 updates in https://github.com/grafana/grafana-async-query-data-js/pull/32
+
 ## v0.3.0
 
 - Chore: update deps in https://github.com/grafana/grafana-async-query-data-js/pull/31
