@@ -38,7 +38,7 @@
     "@grafana/tsconfig": "^2.0.0",
     "@grafana/ui": "11.4.0",
     "@rollup/plugin-node-resolve": "^16.0.0",
-    "@stylistic/eslint-plugin-ts": "^2.9.0",
+    "@stylistic/eslint-plugin-ts": "^3.0.0",
     "@swc/core": "^1.7.40",
     "@swc/jest": "^0.2.36",
     "@testing-library/dom": "^10.4.0",
