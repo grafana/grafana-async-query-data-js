@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## v0.4.1
+
+- Bump the all-node-dependencies group across 1 directory with 15 updates in https://github.com/grafana/grafana-async-query-data-js/pull/62
+- Chore: add label to external contributions in https://github.com/grafana/grafana-async-query-data-js/pull/61
+- Bump node dependencies with 23 updates. Migrate to eslint 9 and add react major versions to dependabot ignore in https://github.com/grafana/grafana-async-query-data-js/pull/57
+
 ## v0.4.0
 
 - Use super.query in https://github.com/grafana/grafana-async-query-data-js/pull/29
