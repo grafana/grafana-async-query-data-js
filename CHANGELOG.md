@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## v0.4.2
+
+- Bump the all-node-dependencies group across 1 directory with 25 updates in [#78](https://github.com/grafana/grafana-async-query-data-js/pull/78)
+- Chore: Use npm_token from vault in [#77](https://github.com/grafana/grafana-async-query-data-js/pull/77)
+- add zizmor ignore rule in [#76](https://github.com/grafana/grafana-async-query-data-js/pull/76)
+- Use vault to generate token in [#75](https://github.com/grafana/grafana-async-query-data-js/pull/75)
+- Cleanup github actions files in [#74](https://github.com/grafana/grafana-async-query-data-js/pull/74)
+- Bump the all-node-dependencies group across 1 directory with 5 updates in [#65](https://github.com/grafana/grafana-async-query-data-js/pull/65)
+
 ## v0.4.1
 
 - Bump the all-node-dependencies group across 1 directory with 15 updates in https://github.com/grafana/grafana-async-query-data-js/pull/62
