@@ -89,7 +89,7 @@ describe('requestLooper', () => {
     });
 
     scheduler.flush();
-    expect(onCancel).toBeCalledTimes(1);
+    expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
   it('increments the request id', (done) => {
