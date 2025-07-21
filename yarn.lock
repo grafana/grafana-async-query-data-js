@@ -6238,7 +6238,7 @@ nano-css@^5.6.2:
     stacktrace-js "^2.0.2"
     stylis "^4.3.0"
 
-napi-postinstall@0.3.2, napi-postinstall@^0.3.0:
+napi-postinstall@^0.3.0:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/napi-postinstall/-/napi-postinstall-0.3.2.tgz#03c62080e88b311c4d7423b0f15f0c920bbcc626"
   integrity sha512-tWVJxJHmBWLy69PvO96TZMZDrzmw5KeiZBz3RHmiM2XZ9grBJ2WgMAFVVg25nqp3ZjTFUs2Ftw1JhscL3Teliw==
@@ -7336,9 +7336,9 @@ rollup-plugin-esbuild@^6.1.1:
     unplugin-utils "^0.2.4"
 
 rollup-plugin-node-externals@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-node-externals/-/rollup-plugin-node-externals-8.0.0.tgz#a6a1541917a7f1ca3fa679d24dedd07269fd6add"
-  integrity sha512-2HIOpWsWn5DqBoYl6iCAmB4kd5GoGbF68PR4xKR1YBPvywiqjtYvDEjHFodyqRL51iAMDITP074Zxs0OKs6F+g==
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-node-externals/-/rollup-plugin-node-externals-8.0.1.tgz#e52f56ba1eaabb146b5a348431889f56927ea240"
+  integrity sha512-j6uve/BPEyHCmQuXpu5/LT5qXw69QLIi6YnFrs6F7tmGFXjkFDT0zqZMt0KaMuWSvkcxJFBklsKfYYoKKEPwyw==
 
 rollup@^4.24.2:
   version "4.45.1"
