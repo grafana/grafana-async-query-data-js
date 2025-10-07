@@ -4,16 +4,20 @@ on:
     branches:
       - main
 
+permissions: {}
+
 jobs:
   npm-publish:
     name: Publish to NPM & GitHub Package Registry
     runs-on: ubuntu-latest
+    # Required for this workflow to have permission to publish NPM packages
+    environment: release
     outputs:
       new_version: ${{ steps.version_check.outputs.version }}
       version_changed: ${{ steps.version_check.outputs.changed }}
     permissions:
       contents: write
-      # id-token: write is required for the get-vault-secrets step
+      # id-token: write required for npm trusted publishing
       id-token: write
     steps:
       - name: Checkout repository
@@ -43,6 +47,10 @@ jobs:
           node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Install npm version ^11.5.1 # npm trusted publishing requires version ^11.5.1
+        if: steps.version_check.outputs.changed == 'true'
+        run: npm install -g npm@^11.5.1
+
       - name: Install dependencies
         if: steps.version_check.outputs.changed == 'true'
         run: yarn
@@ -51,18 +59,9 @@ jobs:
         if: steps.version_check.outputs.changed == 'true'
         run: yarn build
 
-      - name: Get secrets from vault
-        id: get-secrets
-        uses: grafana/shared-workflows/actions/get-vault-secrets@main
-        with:
-          repo_secrets: |
-            NPM_TOKEN=npm-release:npm_token
-
       - name: Publish package to NPM
         if: steps.version_check.outputs.changed == 'true'
-        run: npm publish --access public --scope grafana
-        env:
-          NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
+        run: npm publish --access public
 
       - name: Setup .npmrc file for GitHub Packages
         if: steps.version_check.outputs.changed == 'true'
