@@ -1049,8 +1049,8 @@ __metadata:
     "@types/react": "npm:19.2.7"
     "@types/react-dom": "npm:19.2.3"
     "@types/semver": "npm:^7.5.8"
-    "@typescript-eslint/eslint-plugin": "npm:^8.41.0"
-    "@typescript-eslint/parser": "npm:^8.42.0"
+    "@typescript-eslint/eslint-plugin": "npm:^8.51.0"
+    "@typescript-eslint/parser": "npm:^8.51.0"
     esbuild: "npm:^0.27.0"
     eslint: "npm:^9.36.0"
     eslint-config-prettier: "npm:^10.0.1"
@@ -3163,7 +3163,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^8.41.0":
+"@typescript-eslint/eslint-plugin@npm:^8.51.0":
   version: 8.51.0
   resolution: "@typescript-eslint/eslint-plugin@npm:8.51.0"
   dependencies:
@@ -3183,7 +3183,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^8.42.0":
+"@typescript-eslint/parser@npm:^8.51.0":
   version: 8.51.0
   resolution: "@typescript-eslint/parser@npm:8.51.0"
   dependencies:
