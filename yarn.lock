@@ -1058,7 +1058,7 @@ __metadata:
     "@types/semver": "npm:^7.5.8"
     "@typescript-eslint/eslint-plugin": "npm:^8.51.0"
     "@typescript-eslint/parser": "npm:^8.51.0"
-    esbuild: "npm:^0.27.0"
+    esbuild: "npm:^0.27.2"
     eslint: "npm:^9.36.0"
     eslint-config-prettier: "npm:^10.0.1"
     eslint-plugin-jsdoc: "npm:^62.0.0"
@@ -5026,7 +5026,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.27.0":
+"esbuild@npm:^0.27.2":
   version: 0.27.2
   resolution: "esbuild@npm:0.27.2"
   dependencies:
