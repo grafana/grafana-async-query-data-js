@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@grafana/ui';
 import { DataQuery, LoadingState } from '@grafana/data';
 
@@ -14,17 +14,16 @@ export const RunQueryButtons = <TQuery extends DataQuery>(props: RunQueryButtons
   const { state } = props;
   const [running, setRunning] = useState(false);
   const [stopping, setStopping] = useState(false);
-  const [lastState, setLastState] = useState(state);
+  const [prevState, setPrevState] = useState(state);
   const [lastQuery, setLastQuery] = useState(props.query);
 
-  useEffect(() => {
-    if (state && lastState !== state && state !== LoadingState.Loading) {
+  if (state !== prevState) {
+    setPrevState(state);
+    if (state && state !== LoadingState.Loading) {
       setRunning(false);
       setStopping(false);
     }
-
-    setLastState(state);
-  }, [state, lastState]);
+  }
 
   const onRunQuery = () => {
     setRunning(true);
