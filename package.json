@@ -6,8 +6,8 @@
   "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "dev": "yarn bundle --watch --watch.onStart=\"yarn typecheck\"",
-    "build": "yarn clean && yarn typecheck && yarn bundle",
+    "dev": "npm run bundle -- --watch --watch.onStart=\"npm run typecheck\"",
+    "build": "npm run clean && npm run typecheck && npm run bundle",
     "bundle": "rollup -c rollup.config.ts --configPlugin esbuild",
     "clean": "rimraf ./dist ./compiled",
     "lint": "eslint --cache ./src",
@@ -71,13 +71,26 @@
     "rollup-plugin-node-externals": "9.0.1",
     "typescript": "5.9.3"
   },
-  "packageManager": "yarn@4.17.1",
-  "resolutions": {
+  "packageManager": "npm@11.18.0",
+  "overrides": {
     "immutable": "5.1.9",
-    "protobufjs@^7.3.0": "7.5.6",
-    "protobufjs@^8.0.1": "8.0.3"
+    "eslint-plugin-react": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-react-hooks": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-jsdoc": {
+      "eslint": "$eslint"
+    },
+    "@testing-library/react-hooks": {
+      "react": "$react",
+      "react-dom": "$react-dom",
+      "@types/react": "$@types/react"
+    }
   },
   "engines": {
-    "node": ">=24"
+    "node": ">=24",
+    "npm": ">=11.12.1"
   }
 }
