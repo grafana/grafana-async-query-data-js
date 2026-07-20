@@ -6,16 +6,6 @@ cypress/screenshots/actual
 cypress/videos/
 dist/
 compiled/
-yarn-error.log
 .DS_Store
 .idea/
 .eslintcache
-
-# yarn
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
